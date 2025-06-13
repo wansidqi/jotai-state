@@ -4,8 +4,7 @@ import "./App.css";
 import { useAtomStore } from "./atom";
 
 function App() {
-  const { exampleState, setExample } = useAtomStore();
-  const { counter, name } = exampleState;
+  const { counter, name } = useAtomStore();
 
   return (
     <>
@@ -17,17 +16,13 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>{name}</h1>
-      <button onClick={() => setExample("name", "VR")}>change to VR</button>
-      <button onClick={() => setExample("name", (prev) => prev + "!")}>
-        !
-      </button>
-      <button onClick={() => setExample("name", "Vite + React")}>
-        change to full
-      </button>
+      <h1>{name.value}</h1>
+      <button onClick={() => name.set("VR")}>change to VR</button>
+      <button onClick={() => name.set((prev) => prev + "!")}>!</button>
+      <button onClick={() => name.set("Vite + React")}>change to full</button>
       <div className="card">
-        <button onClick={() => setExample("counter", (prev) => prev + 1)}>
-          count is {counter}
+        <button onClick={() => counter.set((prev) => prev + 1)}>
+          count is {counter.value}
         </button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR

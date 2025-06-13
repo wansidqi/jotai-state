@@ -1,18 +1,20 @@
 import { useAtom } from "jotai";
-import type { PrimitiveAtom } from "jotai";
+import type { Atom } from "jotai";
 import { useCallback, useMemo } from "react";
+import type { PrimitiveAtom } from "jotai";
+import type { SetStateAction } from "jotai";
 
-export function useAtomState<M extends Record<string, PrimitiveAtom<any>>>(
+export function useAtomState<M extends Record<string, Atom<any>>>(
   atoms: M
 ): {
-  get: { [K in keyof M]: M[K] extends PrimitiveAtom<infer T> ? T : never };
+  get: { [K in keyof M]: M[K] extends Atom<infer T> ? T : never };
   set: <K extends keyof M>(
     key: K,
     update:
-      | (M[K] extends PrimitiveAtom<infer T> ? T : never)
+      | (M[K] extends Atom<infer T> ? T : never)
       | ((
-          prev: M[K] extends PrimitiveAtom<infer T> ? T : never
-        ) => M[K] extends PrimitiveAtom<infer T> ? T : never)
+          prev: M[K] extends Atom<infer T> ? T : never
+        ) => M[K] extends Atom<infer T> ? T : never)
   ) => void;
 } {
   const keys = useMemo(() => Object.keys(atoms) as (keyof M)[], [atoms]);
@@ -22,7 +24,7 @@ export function useAtomState<M extends Record<string, PrimitiveAtom<any>>>(
   >;
 
   const get = {} as {
-    [K in keyof M]: M[K] extends PrimitiveAtom<infer T> ? T : never;
+    [K in keyof M]: M[K] extends Atom<infer T> ? T : never;
   };
   const setters = {} as Record<keyof M, (u: any) => void>;
 
@@ -36,10 +38,10 @@ export function useAtomState<M extends Record<string, PrimitiveAtom<any>>>(
     <K extends keyof M>(
       key: K,
       update:
-        | (M[K] extends PrimitiveAtom<infer T> ? T : never)
+        | (M[K] extends Atom<infer T> ? T : never)
         | ((
-            prev: M[K] extends PrimitiveAtom<infer T> ? T : never
-          ) => M[K] extends PrimitiveAtom<infer T> ? T : never)
+            prev: M[K] extends Atom<infer T> ? T : never
+          ) => M[K] extends Atom<infer T> ? T : never)
     ) => {
       setters[key](update);
     },
@@ -47,4 +49,18 @@ export function useAtomState<M extends Record<string, PrimitiveAtom<any>>>(
   );
 
   return { get, set };
+}
+
+export function useAtomAPI<T>(atom: PrimitiveAtom<T>) {
+  const [state, dispatch] = useAtom(atom);
+
+  return {
+    get value(): T {
+      return state;
+    },
+
+    set(updater: SetStateAction<T>) {
+      dispatch(updater);
+    },
+  };
 }

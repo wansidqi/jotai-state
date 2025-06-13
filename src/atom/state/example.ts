@@ -1,17 +1,15 @@
 import { atom } from "jotai";
-import { useAtomState } from "../helper";
+import { useAtomState } from "..";
 
-export const counter = atom(0);
-export const name = atom("Vite + React");
+const counterAtom = atom(0);
+const nameAtom = atom("Vite + React");
 
 export function useExampleState() {
-  const { get, set } = useAtomState({
-    counter,
-    name,
-  });
+  const name = useAtomState(nameAtom);
+  const counter = useAtomState(counterAtom);
 
   return {
-    exampleState: get,
-    setExample: set,
+    counter,
+    name,
   };
 }
